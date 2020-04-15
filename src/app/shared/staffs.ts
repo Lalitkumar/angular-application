@@ -1,6 +1,6 @@
 import {Staff} from './staff';
 
-export const STAFFS: staff[] =  [
+export const STAFFS: Staff[] =  [
     {
       id: '0',
       name: 'Peter Pan',
