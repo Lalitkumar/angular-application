@@ -22,6 +22,4 @@ export class HomeComponent implements OnInit {
   	this.promotion = this.promotionService.getFeaturedPromotion();
   }
 
-
-
 }

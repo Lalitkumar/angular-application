@@ -23,4 +23,8 @@ export class MenuComponent implements OnInit {
     this.selectedDish = dish;
   }
 
+  getId(id: string){
+    alert(id);
+  }
+
 }
