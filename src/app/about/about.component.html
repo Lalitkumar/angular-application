@@ -60,7 +60,7 @@
 
      <h2>Corporate Leadership</h2>
 
-  <div fxFlex>
+  <div fxFlex *ngIf="staffs">
     <mat-list fxFlex>
 	    <mat-list-item *ngFor="let staff of staffs">
 	      <img matListAvatar src={{staff.image}} alt={{staff.name}}>
@@ -75,5 +75,9 @@
     </mat-list>
 
   </div>
+  <div [hidden]="staffs">
+    <mat-spinner></mat-spinner><h4>Loading . . . Please Wait</h4>
+  </div>
+
 </div>
 </div>
