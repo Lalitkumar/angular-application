@@ -20,12 +20,12 @@ export class DishdetailComponent implements OnInit {
   prev: string;
   next: string;
   errMess: string;
+  dishcopy: Dish;
 
 
-  dishDetailForm: FormGroup;
+  commentForm: FormGroup;
   comment: Comment;
-  newComment: Comment;
-  userComment: Comment;
+ 
 
 
   cmtFormErrors = {
@@ -58,21 +58,22 @@ export class DishdetailComponent implements OnInit {
            }
 
    createForm(){
-    this.dishDetailForm = this.formBuilder.group({
+    this.commentForm = this.formBuilder.group({
       author: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ],
       rating: '0',
       comment: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ]
     });
 
-    this.dishDetailForm.valueChanges
+    this.commentForm.valueChanges
     .subscribe(data => this.onValueChanged(data));
     this.onValueChanged(); // (re)set validation messages now
   }
 
    ngOnInit() {
+     this.createForm();
     this.dishService.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
     this.route.params.pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-    .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); }, 
+    .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); }, 
       errmess => this.errMess = <any>errmess);
   }
 
@@ -88,8 +89,8 @@ export class DishdetailComponent implements OnInit {
   }
 
   onValueChanged(data?: any) {
-    if (!this.dishDetailForm) { return; }
-    const form = this.dishDetailForm;
+    if (!this.commentForm) { return; }
+    const form = this.commentForm;
     for (const field in this.cmtFormErrors) {
       if (this.cmtFormErrors.hasOwnProperty(field)) {
         // clear previous error message (if any)
@@ -107,17 +108,20 @@ export class DishdetailComponent implements OnInit {
     }
   }
 
-  onSubmit()
-  {
-    this.dishDetailForm = this.dishDetailForm.value;
-    this.userComment.date = new Date().toISOString();
-
-    this.newComment = this.userComment;
-    this.dish.comments.push(this.newComment);
-
-    this.dishDetailForm.reset({
+  onSubmit(){
+    this.comment = this.commentForm.value;
+    this.comment.date = new Date().toISOString();
+    console.log(this.comment);
+    //this.dish.comments.push(this.comment);
+    this.dishcopy.comments.push(this.comment);
+    this.dishService.putDish(this.dishcopy)
+    .subscribe(dish => {
+      this.dish = dish; this.dishcopy = dish;
+    },
+    errmess => {this.dish = null; this.dishcopy = null; this.errMess = errmess});
+    this.commentForm.reset({
       author: '',
-      rating: 0,
+      rating: 5,
       comment: ''
     });
 
